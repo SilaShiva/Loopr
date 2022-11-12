@@ -43,7 +43,7 @@ def plot_loss_curves(history):
   accuracy = history.history['accuracy']
   val_accuracy = history.history['val_accuracy']
 
-  epochs = range(len(history.history['loss']))
+  epochs = range(len(history.history['accuracy']))
 
   # Plot loss
   plt.plot(epochs, loss, label='training_loss')
@@ -71,7 +71,7 @@ def create_model(model_url, num_classes=5):
   # Create our own model
   model = tf.keras.Sequential([
     feature_extractor_layer, # use the feature extraction layer as the base
-    layers.Dense(num_classes, activation='softmax', name='output_layer') # create our own output layer      
+    layers.Dense(num_classes, activation='softmax') # create our own output layer      
   ])
 
   return model
@@ -84,10 +84,8 @@ def load_image(filename):
   img = tf.image.decode_image(img, channels=3)
 
   # Resize the image (to the same size our model was trained on)
-  img = tf.image.resize(img, size = IMAGE_SHAPE)
-
+  img = (tf.image.resize(img, size = IMAGE_SHAPE))/255.
   # Rescale the image (get all values between 0 and 1)
-  img = img/255.
   return img
 
 # Adjust function to work with multi-class
@@ -109,5 +107,3 @@ def prediction(model, filename, class_names):
   plt.imshow(img)
   plt.title(f"Prediction: {pred_class}")
   plt.axis(False);
-  
-  
